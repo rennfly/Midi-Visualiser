@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useLayoutEffect } from 'react';
-import { Play, Pause, Square, Settings as SettingsIcon, Timer, ZoomIn, MoveVertical } from 'lucide-react';
+import { Play, Pause, Square, Settings as SettingsIcon, Timer, ZoomIn, MoveVertical, Activity } from 'lucide-react';
 import { AppSettings, NoteEvent, DEFAULT_THEME, ThemePalette } from './types';
 import { parseMidi, generateMockNotes, generateThemeFromImage } from './utils';
 import PianoRoll from './components/PianoRoll';
@@ -32,7 +32,8 @@ const App: React.FC = () => {
     themeBrightness: 100,
     themeContrast: 100,
     imageZoom: 1,
-    imageOffsetY: 0
+    imageOffsetY: 0,
+    scopeLineWidth: 2
   });
 
   const [showSettings, setShowSettings] = useState(false);
@@ -49,12 +50,11 @@ const App: React.FC = () => {
     const el = titleRef.current;
     if (!el || !settings.title) return;
 
-    let fontSize = 4; 
-    if (settings.aspectRatio === '9:16') fontSize = 2.8; 
+    let fontSize = settings.aspectRatio === '9:16' ? 3.2 : 4.5; 
     el.style.fontSize = `${fontSize}rem`;
 
     const parentWidth = el.parentElement?.clientWidth || window.innerWidth;
-    const tolerance = 48; 
+    const tolerance = 40; 
     
     while (el.scrollWidth > parentWidth - tolerance && fontSize > 0.5) {
       fontSize -= 0.1;
@@ -156,19 +156,20 @@ const App: React.FC = () => {
 
   const isLandscape = settings.aspectRatio === '16:9';
   
-  // High-level dims for internal canvas resolution
   const dims = isLandscape 
-    ? { piano: { w: 2560, h: 2160 }, scope: { w: 1280, h: 1080 } } 
-    : { piano: { w: 1080, h: 2400 }, scope: { w: 1080, h: 800 } };
+    ? { piano: { w: 1920, h: 1080 }, scope: { w: 800, h: 600 } } 
+    : { piano: { w: 1080, h: 1920 }, scope: { w: 1080, h: 600 } };
 
-  // Strict aspect ratio container
   const visualizerContainerStyle: React.CSSProperties = {
     backgroundColor: activeTheme.background,
-    width: isLandscape ? '100%' : 'auto',
-    height: isLandscape ? 'auto' : '100%',
-    aspectRatio: isLandscape ? '16 / 9' : '9 / 16',
-    maxWidth: isLandscape ? '100%' : 'calc(100vh * 9 / 16)',
-    maxHeight: isLandscape ? 'calc(100vw * 9 / 16)' : '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
+    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+    width: isLandscape ? '100vw' : 'calc(100vh * 9 / 16)',
+    height: isLandscape ? 'calc(100vw * 9 / 16)' : '100vh',
+    maxWidth: '100vw',
+    maxHeight: '100vh',
   };
 
   const coverImageStyle: React.CSSProperties = {
@@ -178,22 +179,22 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-screen flex items-center justify-center overflow-hidden transition-colors duration-700 p-4" style={{ backgroundColor: activeTheme.background }}>
+    <div className="w-full h-screen flex items-center justify-center overflow-hidden transition-colors duration-700 bg-stone-900" style={{ backgroundColor: isLandscape ? '#111' : activeTheme.background }}>
       
       {isCountingDown && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md">
           <div className="text-white text-9xl font-serif italic animate-pulse">{countdown}</div>
         </div>
       )}
 
       <div className="absolute top-4 right-4 z-50">
-         <button onClick={() => setShowSettings(!showSettings)} className="p-3 backdrop-blur-md rounded-full transition-all border border-transparent hover:border-white/20" style={{ color: activeTheme.text, backgroundColor: 'rgba(255,255,255,0.1)' }}>
+         <button onClick={() => setShowSettings(!showSettings)} className="p-3 backdrop-blur-md rounded-full transition-all border border-transparent hover:border-white/20 bg-white/10 text-white">
            <SettingsIcon size={24} />
          </button>
       </div>
 
       {showSettings && (
-        <div className="absolute top-16 right-4 z-50 w-80 bg-white/95 backdrop-blur-xl shadow-2xl p-6 rounded-lg border border-stone-200 overflow-y-auto max-h-[85vh] font-serif custom-scrollbar">
+        <div className="absolute top-16 right-4 z-50 w-80 bg-white shadow-2xl p-6 rounded-lg border border-stone-200 overflow-y-auto max-h-[85vh] font-serif custom-scrollbar">
             <h2 className="text-xl italic mb-6 text-center border-b border-stone-300 pb-2">Settings</h2>
             
             <div className="space-y-6">
@@ -248,6 +249,16 @@ const App: React.FC = () => {
                 )}
               </div>
 
+              <div className="space-y-4 border-t border-stone-100 pt-4">
+                  <label className="text-[10px] uppercase tracking-[0.2em] text-stone-400 block text-center mb-1">Oscilloscope Style</label>
+                  <div className="space-y-1">
+                      <div className="flex items-center gap-1 text-[9px] uppercase tracking-widest text-stone-400">
+                        <Activity size={10}/> Line Width
+                      </div>
+                      <input type="range" min="0.5" max="10" step="0.1" value={settings.scopeLineWidth} onChange={(e) => setSettings({...settings, scopeLineWidth: Number(e.target.value)})} className="w-full accent-stone-800" />
+                  </div>
+              </div>
+
               {imageSrc && (
                 <div className="space-y-4 border-t border-stone-100 pt-4">
                   <label className="text-[10px] uppercase tracking-[0.2em] text-stone-400 block text-center mb-1">Recadrage Image</label>
@@ -296,57 +307,59 @@ const App: React.FC = () => {
 
       <div className="relative shadow-2xl overflow-hidden transition-all duration-700 ease-in-out flex flex-col mx-auto" style={visualizerContainerStyle}>
         
+        {/* TITRE */}
         {isLandscape ? (
           <div className="absolute top-0 w-full text-center pt-8 px-10 z-10 pointer-events-none">
             <h1 ref={titleRef} className="font-serif tracking-[0.2em] mix-blend-difference whitespace-nowrap overflow-visible" 
                 style={{ color: activeTheme.text }}>
-              {settings.title}
+              {settings.title || 'UNTITLED'}
             </h1>
           </div>
         ) : (
-          <div className="w-full text-center pt-12 pb-6 px-10 z-10 shrink-0">
-             <h1 ref={titleRef} className="font-serif tracking-[0.2em] whitespace-nowrap overflow-visible" 
+          <div className="w-full text-center pt-16 pb-8 px-6 z-10 shrink-0">
+             <h1 ref={titleRef} className="font-serif tracking-[0.2em] whitespace-nowrap overflow-visible leading-tight" 
                 style={{ color: activeTheme.text }}>
-              {settings.title}
+              {settings.title || 'UNTITLED'}
             </h1>
           </div>
         )}
 
+        {/* CONTENU PRINCIPAL */}
         {isLandscape ? (
-          <div className="grid grid-cols-12 grid-rows-2 w-full h-full p-10 gap-6 pt-28">
+          /* MISE EN PAGE 16/9 : Rétablie comme avant avec la grille */
+          <div className="grid grid-cols-12 grid-rows-2 w-full h-full p-10 gap-6 pt-28 flex-1">
             <div className="col-span-8 row-span-2 relative overflow-hidden rounded-sm bg-black/5">
                <PianoRoll notes={notes} currentTime={currentTime + (settings.offsetMs/1000)} palette={activeTheme.tracks} backgroundColor={activeTheme.background} width={dims.piano.w} height={dims.piano.h} />
             </div>
             <div className="col-span-4 row-span-1 relative overflow-hidden rounded-sm bg-black/5">
-                <Oscilloscope analyser={analyser} isPlaying={isPlaying} color={activeTheme.scope} backgroundColor={activeTheme.background} width={dims.scope.w} height={dims.scope.h} />
+                <Oscilloscope analyser={analyser} isPlaying={isPlaying} color={activeTheme.scope} backgroundColor={activeTheme.background} width={dims.scope.w} height={dims.scope.h} lineWidth={settings.scopeLineWidth} />
             </div>
             <div className="col-span-4 row-span-1 flex items-center justify-center overflow-hidden">
                <div className="h-full aspect-square relative overflow-hidden shadow-2xl border border-white/10 rounded-sm bg-stone-500/10">
                   {imageSrc ? (
                     <img src={imageSrc} alt="Cover" className="absolute inset-0 w-full h-full" style={coverImageStyle} />
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center opacity-10 font-serif text-2xl italic text-center px-4" style={{ color: activeTheme.text }}>Pochette</div>
+                    <div className="absolute inset-0 flex items-center justify-center opacity-10 font-serif text-2xl italic text-center px-4" style={{ color: activeTheme.text }}>COVER</div>
                   )}
                </div>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col flex-1 w-full p-8 pt-0 gap-6 overflow-hidden">
-             {/* Portrait Top Row: Reduced height to 28% for better balance */}
-             <div className="flex flex-row h-[28%] min-h-[160px] gap-6 shrink-0 justify-center">
-                <div className="aspect-square h-full relative overflow-hidden rounded-sm shadow-xl border border-white/5 bg-black/5 shrink-0">
+          /* MISE EN PAGE 9/16 : Optimisée plein écran sans bordures */
+          <div className="flex flex-col flex-1 w-full gap-0 overflow-hidden">
+             <div className="flex flex-row h-[25%] min-h-[140px] gap-0 shrink-0 justify-center">
+                <div className="aspect-square h-full relative overflow-hidden bg-black/5 shrink-0 border-r border-black/5">
                     {imageSrc ? (
                       <img src={imageSrc} alt="Cover" className="absolute inset-0 w-full h-full" style={coverImageStyle} />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center opacity-10 font-serif text-lg italic text-center" style={{ color: activeTheme.text }}>Pochette</div>
+                      <div className="absolute inset-0 flex items-center justify-center opacity-10 font-serif text-lg italic text-center" style={{ color: activeTheme.text }}>COVER</div>
                     )}
                 </div>
-                <div className="flex-1 relative overflow-hidden rounded-sm bg-black/5">
-                     <Oscilloscope analyser={analyser} isPlaying={isPlaying} color={activeTheme.scope} backgroundColor={activeTheme.background} width={dims.scope.w} height={dims.scope.h} />
+                <div className="flex-1 relative overflow-hidden bg-black/5">
+                     <Oscilloscope analyser={analyser} isPlaying={isPlaying} color={activeTheme.scope} backgroundColor={activeTheme.background} width={dims.scope.w} height={dims.scope.h} lineWidth={settings.scopeLineWidth} />
                 </div>
              </div>
-             {/* Piano Roll takes the remaining vertical space */}
-             <div className="flex-1 relative overflow-hidden rounded-sm bg-black/5">
+             <div className="flex-1 relative overflow-hidden bg-black/5 border-t border-black/5">
                 <PianoRoll notes={notes} currentTime={currentTime + (settings.offsetMs/1000)} palette={activeTheme.tracks} backgroundColor={activeTheme.background} width={dims.piano.w} height={dims.piano.h} />
              </div>
           </div>

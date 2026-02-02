@@ -25,6 +25,7 @@ export interface AppSettings {
   themeContrast: number;   // 0 to 200, default 100
   imageZoom: number;       // 1 to 3, default 1
   imageOffsetY: number;    // -50 to 50, default 0
+  scopeLineWidth: number;  // 1 to 10, default 2
 }
 
 export const DEFAULT_THEME: ThemePalette = {

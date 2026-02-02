@@ -150,15 +150,19 @@ export const drawOscilloscope = (
   color: string,
   backgroundColor: string,
   width: number,
-  height: number
+  height: number,
+  lineWidth: number = 2
 ) => {
   ctx.save();
   ctx.fillStyle = backgroundColor;
   ctx.fillRect(0, 0, width, height);
 
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+
   if (!analyser || !isPlaying) {
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(0, height / 2);
     ctx.lineTo(width, height / 2);
@@ -171,8 +175,6 @@ export const drawOscilloscope = (
   const dataArray = new Uint8Array(bufferLength);
   analyser.getByteTimeDomainData(dataArray);
 
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 2;
   ctx.beginPath();
   const sliceWidth = width * 1.0 / bufferLength;
   let x = 0;
@@ -183,7 +185,6 @@ export const drawOscilloscope = (
     else ctx.lineTo(x, y);
     x += sliceWidth;
   }
-  ctx.lineTo(width, height / 2);
   ctx.stroke();
   ctx.restore();
 };

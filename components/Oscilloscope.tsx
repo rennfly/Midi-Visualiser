@@ -8,6 +8,7 @@ interface OscilloscopeProps {
   backgroundColor: string;
   width: number;
   height: number;
+  lineWidth: number;
 }
 
 const Oscilloscope: React.FC<OscilloscopeProps> = ({
@@ -16,7 +17,8 @@ const Oscilloscope: React.FC<OscilloscopeProps> = ({
   color,
   backgroundColor,
   width,
-  height
+  height,
+  lineWidth
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reqIdRef = useRef<number | undefined>(undefined);
@@ -36,7 +38,7 @@ const Oscilloscope: React.FC<OscilloscopeProps> = ({
     
     const draw = () => {
       reqIdRef.current = requestAnimationFrame(draw);
-      drawOscilloscope(ctx, analyser, isPlaying, color, backgroundColor, width, height);
+      drawOscilloscope(ctx, analyser, isPlaying, color, backgroundColor, width, height, lineWidth);
     };
 
     draw();
@@ -44,7 +46,7 @@ const Oscilloscope: React.FC<OscilloscopeProps> = ({
     return () => {
       if (reqIdRef.current) cancelAnimationFrame(reqIdRef.current);
     };
-  }, [analyser, isPlaying, color, backgroundColor, width, height]);
+  }, [analyser, isPlaying, color, backgroundColor, width, height, lineWidth]);
 
   return <canvas ref={canvasRef} className="block w-full h-full" />;
 };

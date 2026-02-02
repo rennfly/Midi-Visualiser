@@ -40,7 +40,7 @@ const PianoRoll: React.FC<PianoRollProps> = ({
 
   }, [notes, currentTime, palette, backgroundColor, width, height]);
 
-  return <canvas ref={canvasRef} className="block w-full h-full object-contain" />;
+  return <canvas ref={canvasRef} className="block w-full h-full" />;
 };
 
 export default PianoRoll;
