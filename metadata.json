@@ -1,0 +1,5 @@
+{
+  "name": "Tintinnabuli Visualizer",
+  "description": "A minimalist, aesthetic MIDI and Audio visualizer inspired by Arvo Pärt's Tintinnabuli style.",
+  "requestFramePermissions": []
+}
