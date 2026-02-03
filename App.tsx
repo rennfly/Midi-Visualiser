@@ -237,6 +237,22 @@ const App: React.FC = () => {
                     <label className="text-[10px] uppercase tracking-[0.2em] text-stone-400 block mb-1">Cover Art (1:1)</label>
                     <input type="file" accept="image/*" onChange={handleImageUpload} className="text-[10px] w-full file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:bg-stone-100 file:text-stone-600"/>
                  </div>
+                 
+                 <div>
+                    <div className="flex justify-between items-center mb-1">
+                       <label className="text-[10px] uppercase tracking-[0.2em] text-stone-400">Sync Offset</label>
+                       <span className="text-[9px] font-mono text-stone-500">{settings.offsetMs > 0 ? '+' : ''}{settings.offsetMs}ms</span>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="-2000" 
+                      max="2000" 
+                      step="50" 
+                      value={settings.offsetMs} 
+                      onChange={(e) => setSettings({...settings, offsetMs: Number(e.target.value)})} 
+                      className="w-full accent-stone-800 h-1 bg-stone-200 rounded-lg appearance-none cursor-pointer" 
+                    />
+                 </div>
               </div>
 
               <hr className="border-stone-100"/>
