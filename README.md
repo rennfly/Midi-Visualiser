@@ -10,19 +10,25 @@ A minimalist, aesthetic MIDI and Audio visualizer inspired by minimalism musical
     *   **16:9 Landscape**: A balanced grid layout perfect for YouTube or desktop screens.
     *   **9:16 Portrait**: A full-bleed, edge-to-edge layout optimized for TikTok, Reels, and YouTube Shorts.
 *   **Image-Driven Theme Engine**: Upload an album cover and the app automatically extracts a harmonious color palette, adjusting the background, notes, and oscilloscope colors.
-*   **Advanced Customization**:
-    *   Tweak brightness and contrast of the generated themes.
-    *   Real-time image cropping (Zoom and Y-Offset) for the perfect cover art framing.
-    *   Self-scaling title system to ensure legibility regardless of text length.
-*   **Recording-Friendly**: Includes a 3-second countdown timer to help you start your screen recordings perfectly.
+*   **Smart Interface**:
+    *   **Adaptive Contrast**: The settings button automatically switches between Black and White based on the background luminance to ensure perfect visibility.
+    *   **Distraction-Free Recording**: When using the "Start 3s" timer, the UI completely disappears for a clean recording. Hover over the top-right corner to bring the controls back.
+*   **Precision Control**:
+    *   **Sync Offset**: Fine-tune the timing alignment between Audio and MIDI (+/- 2000ms).
+    *   **Cover Art Editing**: Zoom and reposition (Y-Offset) your image directly within the app.
+    *   **Theme Tuning**: Adjust brightness and contrast of the generated color themes.
+    *   **Dynamic Typography**: Self-scaling title system that maintains elegance regardless of text length.
 
 ## 🚀 How to Use
 
 1.  **Audio**: Load your audio file (MP3, WAV, etc.).
-2.  **MIDI**: Load the corresponding MIDI file to synchronize the visual notes.
-3.  **Visuals**: Upload a cover image to generate a customized atmosphere.
-4.  **Settings**: Customize your title, line thickness, and choose your format (16:9 or 9:16).
-5.  **Play**: Hit play and start your screen capture!
+2.  **MIDI**: Load the corresponding MIDI file.
+3.  **Visuals**: Upload a cover image. The app will generate a matching theme.
+4.  **Settings**: 
+    *   Adjust the **Sync Offset** if the MIDI isn't perfectly aligned.
+    *   Tweak the **Oscilloscope** line width.
+    *   Select your format (**16:9** or **9:16**).
+5.  **Record**: Click **"Start 3s"**. The UI will vanish, giving you a 3-second countdown before playback starts—perfect for screen capture.
 
 ## 🛠️ Tech Stack
 
