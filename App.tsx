@@ -197,18 +197,19 @@ const App: React.FC = () => {
       <div className="absolute top-4 right-4 z-50">
          <button 
            onClick={() => setShowSettings(!showSettings)} 
-           className={`p-3 backdrop-blur-md rounded-full transition-all border shadow-sm ${
+           className={`p-3 rounded-full transition-all duration-300 shadow-xl hover:scale-105 active:scale-95 group ${
              isDarkUI 
-               ? 'border-white/10 hover:border-white/20 bg-white/10 text-white' 
-               : 'border-black/5 hover:border-black/10 bg-black/5 text-stone-800'
+               ? 'bg-white text-black hover:bg-stone-200 shadow-white/10' // Fond sombre -> Bouton Blanc, Roue Noire
+               : 'bg-black text-white hover:bg-stone-800 shadow-black/20' // Fond clair -> Bouton Noir, Roue Blanche
            }`}
+           aria-label="Settings"
          >
-           <SettingsIcon size={24} />
+           <SettingsIcon size={24} strokeWidth={2} />
          </button>
       </div>
 
       {showSettings && (
-        <div className="absolute top-16 right-4 z-50 w-80 bg-white shadow-2xl p-6 rounded-lg border border-stone-200 overflow-y-auto max-h-[85vh] font-serif custom-scrollbar">
+        <div className="absolute top-16 right-4 z-50 w-80 bg-white shadow-2xl p-6 rounded-lg border border-stone-200 overflow-y-auto max-h-[85vh] font-serif custom-scrollbar animate-in fade-in slide-in-from-top-2 duration-200">
             <h2 className="text-xl italic mb-6 text-center border-b border-stone-300 pb-2">Settings</h2>
             
             <div className="space-y-6">

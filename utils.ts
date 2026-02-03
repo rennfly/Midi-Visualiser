@@ -193,12 +193,24 @@ export const drawOscilloscope = (
 
 export const getHexLuminance = (hex: string) => {
   const rgb = hexToRgb(hex);
-  if (!rgb) return 0;
+  // Default to 255 (Light) if parsing fails. 
+  // This ensures that if we can't read the color, we assume it's light, 
+  // so the UI chooses dark text (which is safer than white-on-white).
+  if (!rgb) return 255; 
   return 0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b;
 };
 
 export const hexToRgb = (hex: string) => {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  // Handle potential undefined/null
+  if (!hex) return null;
+
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  const fullHex = hex.replace(shorthandRegex, (m, r, g, b) => {
+    return r + r + g + g + b + b;
+  });
+
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
   return result ? {
     r: parseInt(result[1], 16),
     g: parseInt(result[2], 16),
