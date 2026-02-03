@@ -1,7 +1,6 @@
 # 🎹 Tintinnabuli Visualizer
 
 A minimalist, aesthetic MIDI and Audio visualizer inspired by minimalism musical style. Designed for musicians, content creators, and music lovers who want an elegant visual presentation for their compositions.
-<img width="1969" height="1153" alt="image" src="https://github.com/user-attachments/assets/8f1f112c-1f5f-43e7-84e1-f2cc6bfed513" />
 
 ## ✨ Features
 
